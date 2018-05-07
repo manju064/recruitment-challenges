@@ -1,17 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DD7D1C3A-6E45-4C2E-A55A-01984AD4A3E8}</ProjectGuid>
+    <ProjectGuid>{9CF03C35-AE39-4F40-B4A7-5B2A9CEA3040}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Payvision.CodeChallenge.Refactoring.FraudDetection</RootNamespace>
-    <AssemblyName>Payvision.CodeChallenge.Refactoring.FraudDetection</AssemblyName>
+    <RootNamespace>Refactoring.FraudDetection.Dal</RootNamespace>
+    <AssemblyName>Refactoring.FraudDetection.Dal</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,39 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DomainObjects\FraudResult.cs" />
-    <Compile Include="FraudRadar.cs" />
-    <Compile Include="OrderNormalizer.cs" />
+    <Compile Include="IQueryRepository.cs" />
+    <Compile Include="OrderQueryRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Validation\IValidator.cs" />
-    <Compile Include="Validation\OrderCreditCardAddressValidator.cs" />
-    <Compile Include="Validation\OrderCreditCardEmailValidator.cs" />
-    <Compile Include="Validation\OrderValidationRuleEngine.cs" />
+    <Compile Include="QueryRepositoryBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Payvision.CodeChallenge.Base\Payvision.CodeChallenge.Base.csproj">
-      <Project>{f35795fb-e0ef-49a4-a9af-a14ee4614194}</Project>
-      <Name>Payvision.CodeChallenge.Base</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Payvision.CodeChallenge.Resource\Payvision.CodeChallenge.Resource.csproj">
-      <Project>{6b76ee63-d1e9-4340-9428-5ccf97dfcddb}</Project>
-      <Name>Payvision.CodeChallenge.Resource</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Refactoring.FraudDetection.Dal\Refactoring.FraudDetection.Dal.csproj">
-      <Project>{9cf03c35-ae39-4f40-b4a7-5b2a9cea3040}</Project>
-      <Name>Refactoring.FraudDetection.Dal</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Refactoring.FraudDetection.Domain\Refactoring.FraudDetection.Domain.csproj">
       <Project>{4e8bf171-0833-4dc7-9b63-1af966ce972b}</Project>
       <Name>Refactoring.FraudDetection.Domain</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

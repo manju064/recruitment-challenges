@@ -1,4 +1,6 @@
-﻿namespace Payvision.CodeChallenge.Refactoring.FraudDetection.DomainObjects
+﻿using System;
+
+namespace Refactoring.FraudDetection.Domain
 {
     public class Order
     {
@@ -18,7 +20,9 @@
 
         public string CreditCard { get; set; }
 
-        public Order(int orderId, int dealId, string email, string street, string city, string state, string zipCode, string creditCard)
+        public DateTime CreateDateTime { get; set; }
+
+        public Order(int orderId, int dealId, string email, string street, string city, string state, string zipCode, string creditCard, DateTime? createDateTime = null)
         {
             OrderId = orderId;
             DealId = dealId;
@@ -28,6 +32,7 @@
             State = state;
             ZipCode = zipCode;
             CreditCard = creditCard;
+            CreateDateTime = createDateTime ?? DateTime.UtcNow;
         }
     }
 }

@@ -1,16 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Payvision.CodeChallenge.Base.Helpers;
-using Payvision.CodeChallenge.Refactoring.FraudDetection.DomainObjects;
+using Refactoring.FraudDetection.Domain;
 
 namespace Payvision.CodeChallenge.Refactoring.FraudDetection
 {
-    
+    /// <summary>
+    /// Normalize fields of order
+    /// </summary>
     public static class OrderNormalizer 
     {
+        /// <summary>
+        /// Normalize fields of order
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
         public static Order Normalize(Order order)
         {
             Guard.IsNotNull(order, () => order);

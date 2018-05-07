@@ -4,14 +4,16 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Moq;
 using Payvision.CodeChallenge.Refactoring.FraudDetection.DomainObjects;
 using Payvision.CodeChallenge.Refactoring.FraudDetection.Validation;
+using Refactoring.FraudDetection.Dal;
+using Refactoring.FraudDetection.Domain;
 
 namespace Payvision.CodeChallenge.Refactoring.FraudDetection.Tests
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using FluentAssertions;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -19,63 +21,80 @@ namespace Payvision.CodeChallenge.Refactoring.FraudDetection.Tests
     [TestClass]
     public class FraudRadarTests
     {
-        [TestMethod]
-        [DeploymentItem("./Files/OneLineFile.txt", "Files")]
-        public void CheckFraud_OneLineFile_NoFraudExpected()
-        {
-            var result = ExecuteTest(Path.Combine(Environment.CurrentDirectory, "Files", "OneLineFile.txt"));
+        private readonly Mock<IQueryRepository<Order>> _orderQueryRepository;
+        private readonly Mock<IOrderValidationRuleEngine> _orderValidationRuleEngine;
 
-            result.Should().NotBeNull("The result should not be null.");
-            result.Count().ShouldBeEquivalentTo(0, "The result should not contains fraudulent lines");
+        public FraudRadarTests()
+        {
+            _orderQueryRepository = new Mock<IQueryRepository<Order>>();
+            _orderValidationRuleEngine = new Mock<IOrderValidationRuleEngine>();
         }
 
-        [TestMethod]
-        [DeploymentItem("./Files/TwoLines_FraudulentSecond.txt", "Files")]
-        public void CheckFraud_TwoLines_SecondLineFraudulent()
-        {
-            var result = ExecuteTest(Path.Combine(Environment.CurrentDirectory, "Files", "TwoLines_FraudulentSecond.txt"));
+        private FraudRadar FraudRadar => new FraudRadar(_orderValidationRuleEngine.Object, _orderQueryRepository.Object);
 
-            result.Should().NotBeNull("The result should not be null.");
-            result.Count().ShouldBeEquivalentTo(1, "The result should contains the number of lines of the file");
-            result.First().IsFraudulent.Should().BeTrue("The first line is not fraudulent");
-            result.First().OrderId.Should().Be(2, "The first line is not fraudulent");
-        }
 
         [TestMethod]
-        [DeploymentItem("./Files/ThreeLines_FraudulentSecond.txt", "Files")]
-        public void CheckFraud_ThreeLines_SecondLineFraudulent()
+        public void CheckFraud_OneOrder_NoFraudExpected()
         {
-            var result = ExecuteTest(Path.Combine(Environment.CurrentDirectory, "Files", "ThreeLines_FraudulentSecond.txt"));
-
-            result.Should().NotBeNull("The result should not be null.");
-            result.Count().ShouldBeEquivalentTo(1, "The result should contains the number of lines of the file");
-            result.First().IsFraudulent.Should().BeTrue("The first line is not fraudulent");
-            result.First().OrderId.Should().Be(2, "The first line is not fraudulent");
-        }
-
-        [TestMethod]
-        [DeploymentItem("./Files/FourLines_MoreThanOneFraudulent.txt", "Files")]
-        public void CheckFraud_FourLines_MoreThanOneFraudulent()
-        {
-            var result = ExecuteTest(Path.Combine(Environment.CurrentDirectory, "Files", "FourLines_MoreThanOneFraudulent.txt"));
-
-            result.Should().NotBeNull("The result should not be null.");
-            result.Count().ShouldBeEquivalentTo(2, "The result should contains the number of lines of the file");
-        }
-
-        
-
-        private static List<FraudResult> ExecuteTest(string filePath)
-        {
-            var OrderValidationRule = new OrderValidationRuleEngine(new List<IValidator<Order>>{new OrderCreditCardEmailValidator(), new OrderCreditCardAddressValidator()});
-            var fraudRadar = new FraudRadar(OrderValidationRule);
-
-            #region Test data
-            var order = new Order(1, 1, "bugs@bunny.com", "123 Sesame St.", "New York", "NY", "10011", "12345689010");
-            var orders = new[] { order };
+            #region Setup mock 
+            var orders = TestDataHelper.GetSingleOrder();
+            _orderQueryRepository.Setup(c => c.GetAll()).Returns(orders);
+            _orderValidationRuleEngine.Setup(v => v.Validate(orders)).Returns(new List<FraudResult>());
             #endregion
 
-            return fraudRadar.Check(orders).ToList();
+            var result = FraudRadar.Check().ToList();
+
+            result.Should().NotBeNull("The result should not be null.");
+            result.Count().ShouldBeEquivalentTo(0, "The result should not contains fraudulent orders");
+        }
+
+        [TestMethod]
+        public void CheckFraud_TwoOrders_SecondorderFraudulent()
+        {
+            #region Setup mock 
+            var orders = TestDataHelper.Get_TwoOrders_SecondOrderFraudulent();
+            _orderQueryRepository.Setup(c => c.GetAll()).Returns(orders);
+            _orderValidationRuleEngine.Setup(v => v.Validate(orders)).Returns(new[] { new FraudResult(2, true) } );
+            #endregion
+
+            var result = FraudRadar.Check().ToList();
+
+            result.Should().NotBeNull("The result should not be null.");
+            result.Count().ShouldBeEquivalentTo(1, "The result should contains the number of orders");
+            result.First().IsFraudulent.Should().BeTrue("The first order is not fraudulent");
+            result.First().OrderId.Should().Be(2, "The first order is not fraudulent");
+        }
+
+        [TestMethod]
+        public void CheckFraud_ThreeOrders_SecondOrderFraudulent()
+        {
+            #region Setup mock 
+            var orders = TestDataHelper.Get_ThreeOrders_SecondOrderFraudulent();
+            _orderQueryRepository.Setup(c => c.GetAll()).Returns(orders);
+            _orderValidationRuleEngine.Setup(v => v.Validate(orders)).Returns(new[] { new FraudResult(2, true) });
+            #endregion
+
+            var result = FraudRadar.Check().ToList();
+
+            result.Should().NotBeNull("The result should not be null.");
+            result.Count().ShouldBeEquivalentTo(1, "The result should contains the number of orders");
+            result.First().IsFraudulent.Should().BeTrue("The first order is not fraudulent");
+            result.First().OrderId.Should().Be(2, "The first order is not fraudulent");
+        }
+
+        [TestMethod]
+        public void CheckFraud_Fourorders_MoreThanOneFraudulent()
+        {
+            #region Setup mock 
+            var orders = TestDataHelper.Get_FourOrders_MoreThanOneFraudulent();
+            _orderQueryRepository.Setup(c => c.GetAll()).Returns(orders);
+            _orderValidationRuleEngine.Setup(v => v.Validate(orders)).Returns(new[] { new FraudResult(2, true), new FraudResult(4, true) });
+            #endregion
+
+            var result = FraudRadar.Check().ToList();
+
+            result.Should().NotBeNull("The result should not be null.");
+            result.Count().ShouldBeEquivalentTo(2, "The result should contains the number of orders");
         }
     }
 }

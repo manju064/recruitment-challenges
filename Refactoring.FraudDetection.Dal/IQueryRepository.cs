@@ -4,19 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Payvision.CodeChallenge.Refactoring.FraudDetection.DomainObjects
+namespace Refactoring.FraudDetection.Dal
 {
     /// <summary>
-    /// Validator base class
+    /// Query repository
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IValidator<T>
+    public interface IQueryRepository<T> 
     {
         /// <summary>
-        /// Validation method
+        /// Get all rows
         /// </summary>
-        /// <param name="value"></param>
         /// <returns></returns>
-        IList<FraudResult> Validate(IList<T> values, T value = default(T));
+        IEnumerable<T> GetAll();
     }
 }

@@ -27,6 +27,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payvision.CodeChallenge.Bas
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payvision.CodeChallenge.Resource", "Payvision.CodeChallenge.Resource\Payvision.CodeChallenge.Resource.csproj", "{6B76EE63-D1E9-4340-9428-5CCF97DFCDDB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Refactoring.FraudDetection.Dal", "Refactoring.FraudDetection.Dal\Refactoring.FraudDetection.Dal.csproj", "{9CF03C35-AE39-4F40-B4A7-5B2A9CEA3040}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Refactoring.FraudDetection.Domain", "Refactoring.FraudDetection.Domain\Refactoring.FraudDetection.Domain.csproj", "{4E8BF171-0833-4DC7-9B63-1AF966CE972B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,14 @@ Global
 		{6B76EE63-D1E9-4340-9428-5CCF97DFCDDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B76EE63-D1E9-4340-9428-5CCF97DFCDDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B76EE63-D1E9-4340-9428-5CCF97DFCDDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CF03C35-AE39-4F40-B4A7-5B2A9CEA3040}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CF03C35-AE39-4F40-B4A7-5B2A9CEA3040}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CF03C35-AE39-4F40-B4A7-5B2A9CEA3040}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CF03C35-AE39-4F40-B4A7-5B2A9CEA3040}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E8BF171-0833-4DC7-9B63-1AF966CE972B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E8BF171-0833-4DC7-9B63-1AF966CE972B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E8BF171-0833-4DC7-9B63-1AF966CE972B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E8BF171-0833-4DC7-9B63-1AF966CE972B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,6 +80,8 @@ Global
 		{DD7D1C3A-6E45-4C2E-A55A-01984AD4A3E8} = {E2F5E239-3314-4D2A-8F1C-7A9A5A462636}
 		{F35795FB-E0EF-49A4-A9AF-A14EE4614194} = {69C1439A-01A7-40EE-98B3-C1409D571F0C}
 		{6B76EE63-D1E9-4340-9428-5CCF97DFCDDB} = {69C1439A-01A7-40EE-98B3-C1409D571F0C}
+		{9CF03C35-AE39-4F40-B4A7-5B2A9CEA3040} = {E2F5E239-3314-4D2A-8F1C-7A9A5A462636}
+		{4E8BF171-0833-4DC7-9B63-1AF966CE972B} = {E2F5E239-3314-4D2A-8F1C-7A9A5A462636}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC979DCB-8E68-4007-83EB-97CF13B04BF4}

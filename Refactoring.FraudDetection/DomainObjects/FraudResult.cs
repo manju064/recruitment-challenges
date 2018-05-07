@@ -8,6 +8,12 @@ namespace Payvision.CodeChallenge.Refactoring.FraudDetection.DomainObjects
 
         public bool IsFraudulent { get; set; }
 
+        public FraudResult(int orderId, bool isFraudulent)
+        {
+            OrderId = orderId;
+            IsFraudulent = isFraudulent;
+        }
+
         public bool Equals(FraudResult other)
         {
             return this.OrderId == other.OrderId &&

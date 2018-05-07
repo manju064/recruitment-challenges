@@ -1,4 +1,5 @@
 ﻿using Payvision.CodeChallenge.Base.Helpers;
+using Refactoring.FraudDetection.Domain;
 
 namespace Payvision.CodeChallenge.Refactoring.FraudDetection.Validation
 {
@@ -6,9 +7,22 @@ namespace Payvision.CodeChallenge.Refactoring.FraudDetection.Validation
     using DomainObjects;
 
     /// <summary>
+    /// interface for validation rule engine for orders
+    /// </summary>
+    public interface IOrderValidationRuleEngine
+    {
+        /// <summary>
+        /// Validation method
+        /// </summary>
+        /// <param name="values"></param>
+        /// <returns></returns>
+        IList<FraudResult> Validate(IList<Order> orders);
+    }
+
+    /// <summary>
     /// Order validation rule composite object
     /// </summary>
-    public class OrderValidationRuleEngine : List<IValidator<Order>>, IValidator<Order>
+    public class OrderValidationRuleEngine : List<IValidator<Order>>, IOrderValidationRuleEngine
     {
         /// <summary>
         /// Pass list of validator to constructor
@@ -20,33 +34,24 @@ namespace Payvision.CodeChallenge.Refactoring.FraudDetection.Validation
             Guard.IsNotNull(validatorList, () => validatorList);
         }
 
-        /// <summary>
-        /// Perform validation on set of defined validation rules
-        /// </summary>
-        /// <param name="orders"></param>
-        /// <param name="current"></param>
-        /// <returns></returns>
-        public IList<FraudResult> Validate(IList<Order> orders, Order current = null)
-        {
-            Guard.IsNotNull(orders, () => orders);
 
+        /// <inheritdoc />
+        public IList<FraudResult> Validate(IList<Order> orders)
+        {
             var fraudResults = new List<FraudResult>();
 
             for (int i = 0; i < orders.Count; i++)
             {
-                current = orders[i];
+                var current = orders[i];
 
                 this.ForEach(validator =>
                 {
                     var result = validator.Validate(orders, current);
 
-                    if (result?.Count > 0)
+                    foreach (var fraudResult in result)
                     {
-                        foreach (var fraudResult in result)
-                        {
-                            if(!fraudResults.Contains(fraudResult))
-                                fraudResults.Add(fraudResult);
-                        }
+                        if (!fraudResults.Contains(fraudResult))
+                            fraudResults.Add(fraudResult);
                     }
                 });
             }

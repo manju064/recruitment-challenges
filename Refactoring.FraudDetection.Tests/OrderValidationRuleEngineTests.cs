@@ -3,37 +3,46 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Payvision.CodeChallenge.Refactoring.FraudDetection.DomainObjects;
 using Payvision.CodeChallenge.Refactoring.FraudDetection.Validation;
+using Refactoring.FraudDetection.Domain;
 
 namespace Payvision.CodeChallenge.Refactoring.FraudDetection.Tests
 {
     [TestClass]
     public class OrderValidationRuleEngineTests
     {
+        private readonly Mock<IValidator<Order>> _orderCreditCardEmailValidator;
+        private readonly Mock<IValidator<Order>> _orderCreditCardAddressValidator;
 
-        private readonly IValidator<Order> validator = new OrderValidationRuleEngine(new List<IValidator<Order>>
+        public OrderValidationRuleEngineTests()
         {
-            new OrderCreditCardEmailValidator(),
-            new OrderCreditCardAddressValidator()
+            _orderCreditCardEmailValidator = new Mock<IValidator<Order>>();
+            _orderCreditCardAddressValidator = new Mock<IValidator<Order>>();
+        }
+
+        private IOrderValidationRuleEngine OrderValidationRuleEngine => new OrderValidationRuleEngine(new List<IValidator<Order>>
+        {
+            _orderCreditCardEmailValidator.Object,
+            _orderCreditCardAddressValidator.Object
         });
 
         [TestMethod]
         public void Test_Engine_FourOrders_MoreThanOneFraudulent()
         {
-            #region Test data
-            var order1 = new Order(1, 1, "bugs@bunny.com", "123 Sesame St.", "New York", "NY", "10011", "12345689010");
-            var order2 = new Order(2, 1, "bugs2@bunny.com", "123 Sesame St.", "New York", "NY", "10011", "12345689011");
-            var order3 = new Order(3, 2, "roger@rabbit.com", "1234 Not Sesame St.", "Colorado", "CL", "10012", "12345689012");
-            var order4 = new Order(4, 2, "roger@rabbit.com", "1234 Not Sesame St.", "Colorado", "CL", "10012", "12345689014");
-
-            var orders = new[] { order1, order2, order3, order4 };
+            #region Setup mock 
+            var orders = TestDataHelper.Get_FourOrders_MoreThanOneFraudulent();
+            _orderCreditCardEmailValidator.Setup(o => o.Validate(orders, It.IsAny<Order>()))
+                .Returns(new[] {new FraudResult(2, true)});
+            _orderCreditCardAddressValidator.Setup(o => o.Validate(orders, It.IsAny<Order>()))
+                .Returns(new[] { new FraudResult(4, true) });
             #endregion
 
-            var result = validator.Validate(orders);
+            var result = OrderValidationRuleEngine.Validate(orders);
 
             result.Should().NotBeNull("The result should not be null.");
-            result.Count().ShouldBeEquivalentTo(2, "The result should contains the number of lines of the file");
+            result.Count().ShouldBeEquivalentTo(2, "The result should contains the number of orders");
         }
     }
 }

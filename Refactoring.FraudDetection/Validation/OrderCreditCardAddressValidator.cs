@@ -1,8 +1,9 @@
-﻿namespace Payvision.CodeChallenge.Refactoring.FraudDetection.Validation
+﻿using Refactoring.FraudDetection.Domain;
+
+namespace Payvision.CodeChallenge.Refactoring.FraudDetection.Validation
 {
     using System.Collections.Generic;
     using DomainObjects;
-    using Base.Helpers;
 
     /// <summary>
     /// Order credit card address validation 
@@ -17,11 +18,8 @@
         /// <returns></returns>
         public IList<FraudResult> Validate(IList<Order> orders, Order current)
         {
-            Guard.IsNotNull(orders, () => orders);
-            Guard.IsNotNull(current, () => current);
-
             var fraudResults = new List<FraudResult>();
-            var i = orders.IndexOf(current);
+            var i = orders?.IndexOf(current)??-1;
 
             if (i >= 0)
             {
@@ -34,7 +32,7 @@
                         && current?.City == orders[j]?.City
                         && current?.CreditCard != orders[j]?.CreditCard)
                     {
-                        fraudResults.Add(new FraudResult { IsFraudulent = true, OrderId = orders[j]?.OrderId??-1 });
+                        fraudResults.Add(new FraudResult(orders[j]?.OrderId??-1, true));
                     }
                 }
             }

@@ -5,6 +5,11 @@
 // -----------------------------------------------------------------------
 
 
+using System.Linq;
+using Payvision.CodeChallenge.Refactoring.FraudDetection.Validation;
+using Refactoring.FraudDetection.Dal;
+using Refactoring.FraudDetection.Domain;
+
 namespace Payvision.CodeChallenge.Refactoring.FraudDetection
 {
     using System;
@@ -19,30 +24,42 @@ namespace Payvision.CodeChallenge.Refactoring.FraudDetection
     /// </summary>
     public interface IFraudRadar
     {
-        IEnumerable<FraudResult> Check(IList<Order> orders);
+        /// <summary>
+        /// Fraud check method
+        /// </summary>
+        /// <param name="from">from date time of order</param>
+        /// <param name="to">up to date time of order</param>
+        /// <returns></returns>
+        IEnumerable<FraudResult> Check(DateTime? from = null, DateTime? to = null);
     }
     #endregion
 
     #region Implementation
-    /// <summary>
-    /// Fraud Radar to perform fraud detection
-    /// </summary>
+
+    /// <inheritdoc />
     public class FraudRadar : IFraudRadar
     {
-        private readonly IValidator<Order> _validator;
+        private readonly IQueryRepository<Order> _orderQueryRepository;
 
-        public FraudRadar(IValidator<Order> validator)
+        private readonly IOrderValidationRuleEngine _orderValidationRuleEngine;
+
+        public FraudRadar(IOrderValidationRuleEngine orderValidationRuleEngine, IQueryRepository<Order> orderQueryRepository)
         {
-            Guard.IsNotNull(validator, () => validator);
+            Guard.IsNotNull(orderValidationRuleEngine, () => orderValidationRuleEngine);
+            Guard.IsNotNull(orderQueryRepository, () => orderQueryRepository);
 
-            _validator = validator;
+            _orderValidationRuleEngine = orderValidationRuleEngine;
+            _orderQueryRepository = orderQueryRepository;
         }
 
-        public IEnumerable<FraudResult> Check(IList<Order> orders)
+        /// <inheritdoc />
+        public IEnumerable<FraudResult> Check(DateTime? from = null, DateTime? to = null)
         {
-            Guard.IsNotNull(orders, () => orders);
-
             var fraudResults = new List<FraudResult>();
+
+            //TODO, apply filtering of transaction based on from and to date time
+
+            IList<Order> orders = _orderQueryRepository.GetAll().ToList();
 
             // NORMALIZE
             for (int i = 0; i < orders.Count; i++)
@@ -51,7 +68,7 @@ namespace Payvision.CodeChallenge.Refactoring.FraudDetection
             }
 
             // CHECK FRAUD
-            var results = _validator.Validate(orders);
+            var results = _orderValidationRuleEngine.Validate(orders);
 
             if (results?.Count > 0)
                 fraudResults.AddRange(results);
