@@ -15,7 +15,7 @@ namespace CountingBits.Tests
     [TestClass]
     public class PositiveBitCounterTest
     {
-        private readonly PositiveBitCounter bitCounter = new PositiveBitCounter();
+        private readonly IBitCounter bitCounter = new PositiveBitCounter();
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]

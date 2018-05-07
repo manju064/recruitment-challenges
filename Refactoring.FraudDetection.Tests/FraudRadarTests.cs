@@ -4,6 +4,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Payvision.CodeChallenge.Refactoring.FraudDetection.DomainObjects;
+using Payvision.CodeChallenge.Refactoring.FraudDetection.Validation;
+
 namespace Payvision.CodeChallenge.Refactoring.FraudDetection.Tests
 {
     using System;
@@ -62,11 +65,17 @@ namespace Payvision.CodeChallenge.Refactoring.FraudDetection.Tests
 
         
 
-        private static List<FraudRadar.FraudResult> ExecuteTest(string filePath)
+        private static List<FraudResult> ExecuteTest(string filePath)
         {
-            var fraudRadar = new FraudRadar();
+            var OrderValidationRule = new OrderValidationRuleEngine(new List<IValidator<Order>>{new OrderCreditCardEmailValidator(), new OrderCreditCardAddressValidator()});
+            var fraudRadar = new FraudRadar(OrderValidationRule);
 
-            return fraudRadar.Check(filePath).ToList();
+            #region Test data
+            var order = new Order(1, 1, "bugs@bunny.com", "123 Sesame St.", "New York", "NY", "10011", "12345689010");
+            var orders = new[] { order };
+            #endregion
+
+            return fraudRadar.Check(orders).ToList();
         }
     }
 }

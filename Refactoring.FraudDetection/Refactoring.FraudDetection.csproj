@@ -41,8 +41,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DomainObjects\FraudResult.cs" />
+    <Compile Include="DomainObjects\IValidator.cs" />
+    <Compile Include="DomainObjects\Order.cs" />
     <Compile Include="FraudRadar.cs" />
+    <Compile Include="OrderNormalizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validation\OrderCreditCardAddressValidator.cs" />
+    <Compile Include="Validation\OrderCreditCardEmailValidator.cs" />
+    <Compile Include="Validation\OrderValidationRuleEngine.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Payvision.CodeChallenge.Base\Payvision.CodeChallenge.Base.csproj">
+      <Project>{f35795fb-e0ef-49a4-a9af-a14ee4614194}</Project>
+      <Name>Payvision.CodeChallenge.Base</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
